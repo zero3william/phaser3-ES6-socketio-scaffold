@@ -1,3 +1,3 @@
-import Client from "./client/phaser/Client";
+import Client from './client/Client';
 
 window.game = new Client();
