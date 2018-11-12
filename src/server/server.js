@@ -17,12 +17,13 @@ io.on('connection', socket => {
   let index = roomList.findIndex((item, index) => {
     if (item.isStart === false) {
       if (item.green === null) {
-        item.green = socket.id;
+        item.green = socket;
         socket.join(`room${index}`);
         return true;
       }
       if (item.blue === null) {
-        item.blue = socket.id;
+        item.blue = socket;
+        item.isStart = true;
         socket.join(`room${index}`);
         io.to(`room${index}`).emit('gameStart');
         return true;
@@ -45,7 +46,11 @@ io.on('connection', socket => {
 
   socket.on('disconnect', () => {
     console.log(`user ${socket.id} disconnected`);
-    // roomList[playerList.get(socket.id)]
+    roomList[playerList.get(socket.id)] = {
+      green: null,
+      blue: null,
+      isStart: false
+    };
     playerList.delete(socket.id);
   });
 });
