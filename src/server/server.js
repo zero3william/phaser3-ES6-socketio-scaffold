@@ -1,16 +1,56 @@
-const express = require("express");
+const express = require('express');
 const app = express();
-const server = require("http").Server(app);
-const io = require("socket.io").listen(server);
+const server = require('http').Server(app);
+const io = require('socket.io').listen(server);
 
-io.on("connection", function(socket) {
-    console.log("a user connected");
-    socket.on("disconnect", function() {
-        console.log("user disconnected");
-    });
+let playerList = new Map();
+
+let roomList = Array.apply(null, Array(4)).map(() => {
+  return {
+    green: null,
+    blue: null,
+    isStart: false
+  };
 });
 
-app.set("port", 8080);
-server.listen(app.get("port"), function() {
-    console.log(`Listening on ${server.address().port}`);
+io.on('connection', socket => {
+  let index = roomList.findIndex((item, index) => {
+    if (item.isStart === false) {
+      if (item.green === null) {
+        item.green = socket.id;
+        socket.join(`room${index}`);
+        return true;
+      }
+      if (item.blue === null) {
+        item.blue = socket.id;
+        socket.join(`room${index}`);
+        io.to(`room${index}`).emit('gameStart');
+        return true;
+      }
+    } else {
+      return false;
+    }
+  });
+
+  //table all full
+  if (index === -1) {
+    return 0;
+  }
+
+  playerList.set(socket.id, index);
+
+  console.log(`user ${socket.id} connected`);
+  console.log('rooms:', roomList);
+  console.log('players:', playerList);
+
+  socket.on('disconnect', () => {
+    console.log(`user ${socket.id} disconnected`);
+    // roomList[playerList.get(socket.id)]
+    playerList.delete(socket.id);
+  });
+});
+
+app.set('port', 8080);
+server.listen(app.get('port'), () => {
+  console.log(`Listening on ${server.address().port}`);
 });

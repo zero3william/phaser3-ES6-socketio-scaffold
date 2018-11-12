@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
 import io from 'socket.io-client';
 
-class GameScene extends Phaser.Scene {
+class PlayGame extends Phaser.Scene {
   constructor() {
-    super({ key: 'GameScene' });
+    super({ key: 'PlayGame' });
   }
 
   init() {}
@@ -13,12 +13,10 @@ class GameScene extends Phaser.Scene {
   }
 
   create() {
-    this.add.image(0, 0, 'bg');
-    this.socket = io('http://localhost:8080');
-    this.socket.on('connect', () => {});
+    this.add.image(195, 350, 'bg');
   }
 
   update(time, delta) {}
 }
 
-export default GameScene;
+export default PlayGame;
