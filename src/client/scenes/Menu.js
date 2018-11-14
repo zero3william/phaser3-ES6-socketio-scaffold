@@ -4,7 +4,6 @@ import io from 'socket.io-client';
 let count;
 let countText;
 let prevTime;
-
 class Menu extends Phaser.Scene {
   constructor() {
     super({ key: 'Menu' });
@@ -14,6 +13,11 @@ class Menu extends Phaser.Scene {
 
   preload() {
     this.load.image('bg', '../assets/sprites/bg.jpg');
+    this.load.image('lion', '../assets/sprites/lion.png');
+    this.load.image('elephant', '../assets/sprites/elephant.png');
+    this.load.image('giraffe', '../assets/sprites/giraffe.png');
+    this.load.image('chick', '../assets/sprites/chick.png');
+    this.load.image('chicken', '../assets/sprites/chicken.png');
   }
 
   create() {
@@ -32,9 +36,8 @@ class Menu extends Phaser.Scene {
         countText.setText(`搜索中... 0s`);
         count = false;
 
-        this.socket.on('gameStart', () => {
-          console.log('test');
-          this.scene.start('PlayGame');
+        this.socket.on('gameStart', room => {
+          this.scene.start('PlayGame', { socket: this.socket, room: room });
         });
       });
     });
